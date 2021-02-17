@@ -1,0 +1,161 @@
+<html>
+	<head>
+		<!-- Core CSS file -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='photoswipe/photoswipe.css') }}"> 
+
+		<!-- Skin CSS file (styling of UI - buttons, caption, etc.)
+		     In the folder of skin CSS file there are also:
+		     - .png and .svg icons sprite, 
+		     - preloader.gif (for browsers that do not support CSS animations) -->
+		     <link rel="stylesheet" href="{{ url_for('static', filename='photoswipe/default-skin/default-skin.css') }}"> 
+
+		<script
+			src="https://code.jquery.com/jquery-3.4.1.min.js"
+			integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+			crossorigin="anonymous"></script>
+		<!-- Core JS file -->
+		<script src="{{ url_for('static', filename='photoswipe/photoswipe.min.js') }}"></script> 
+
+		<!-- UI JS file -->
+		<script src="{{ url_for('static', filename='photoswipe/photoswipe-ui-default.min.js') }}"></script> 
+	</head>
+	<body>
+
+		<input type="hidden" value="{{ path }}" id='path' class='path' />
+	<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+<script>
+
+var curr_slide = 0;
+var total_items = 0;
+var pswpElement = document.querySelectorAll('.pswp')[0];
+
+// build items array
+var items = [
+	{% for file in files %}
+	    {
+		src: '{{ url_for('static', filename='temp/'+file['filename']) }}',
+		w: {{file['width']}},
+		h: {{file['height']}}
+	    },
+
+	{% endfor %}
+
+];
+
+// define options (if needed)
+var options = {
+    // optionName: 'option value'
+    // for example:
+	index: {{ page }}, // start at first slide
+	preload: [2,2],
+	shareEl: false,
+	pinchToClose: false,
+	closeOnScroll: false,
+	closeOnVerticalDrag: false,
+	history: false,
+	closeElClasses: ['top-bar'],
+	closeEl: false,
+	zoomEl:false,
+	maxSpreadZoom: 4,
+	loop: false
+
+};
+
+// Initializes and opens PhotoSwipe
+var gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, items, options);
+$nextBtn = $('.pswp__button--arrow--right', gallery.template);
+$prevBtn = $('.pswp__button--arrow--left', gallery.template);
+
+gallery.listen('beforeChange', function() {
+	    $nextBtn.toggle(this.options.loop || this.getCurrentIndex() < this.items.length - 1);
+	    $prevBtn.toggle(this.options.loop || this.getCurrentIndex() > 0);
+});
+
+gallery.listen('afterChange', function() {
+		total_items = gallery.options.getNumItemsFn();
+		curr_slide = gallery.getCurrentIndex();
+		var path = $('#path').val();
+		$.ajax({
+			  url: "/update_path?path="+encodeURIComponent(path)+"&page="+curr_slide
+		});
+
+		console.log(curr_slide);
+		console.log(total_items);
+		if(curr_slide == total_items-1) {
+			$.ajax({
+				url: "/end_comic?path="+encodeURIComponent(path)
+			})
+		}
+});
+
+gallery.init();
+
+</script>
+
+</html>

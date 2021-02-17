@@ -1,0 +1,82 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Comic Reader</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/navbar-static/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <!--    <link href="navbar-top.css" rel="stylesheet"<-->
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+      <a class="navbar-brand" href="#">Comic Reader</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+          </li>
+	</ul>
+      </div>
+    </nav>
+
+    <main role="main" class="container">
+      <div class="jumbotron">
+        <h1>Currently Reading Comics</h1>
+	<table id="example" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Comic</th>
+		<th></th>
+            </tr>
+        </thead>
+        <tbody>
+	    {% for comic in comics %}
+		<tr>
+			<td><a href="comics/{{ comic | urlencode }}">{{ comic | get_comic_name }}</a></td>
+			<td><a href="mark_unread?path={{ comic | urlencode }}">Mark Unread</a></td>
+		</tr>
+
+	    {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Comic</th>
+		<th></th>
+            </tr>
+        </tfoot>
+    </table>
+      </div>
+      <div class="embed-responsive embed-responsive-1by1">
+    <iframe class="embed-responsive-item" src="/comics/"></iframe>
+      </div>
+
+    </main>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/esm/popper.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+  </body>
+</html>
+
