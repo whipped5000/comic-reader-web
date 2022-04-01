@@ -205,7 +205,7 @@ def autoindex(path='.'):
         print("Clearing Temp Directory")
         os.system('rm -rf {}*'.format(TEMP_DIR))
         print("Extracting comic")
-        os.system('unrar e "{}" {}'.format(BASE_DIR+path,TEMP_DIR))
+        os.system('7z e "{}" -o{}'.format(BASE_DIR+path,TEMP_DIR))
         print("Checking if we are reading")
         result = check_filename_status(conn,path)
         if not result:
@@ -231,7 +231,7 @@ def autoindex(path='.'):
         print("Clearing Temp Directory")
         os.system('rm -rf {}*'.format(TEMP_DIR))
         print("Extracting comic")
-        os.system('unzip -j "{}" -d {}'.format(BASE_DIR+path,TEMP_DIR))
+        os.system('7z e "{}" -o{}'.format(BASE_DIR+path,TEMP_DIR))
         print("Checking if we are reading")
         result = check_filename_status(conn,path)
         if not result:
